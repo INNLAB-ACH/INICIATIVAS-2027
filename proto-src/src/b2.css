@@ -1,0 +1,7 @@
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-h{font-family:'Manrope',system-ui,sans-serif;font-weight:700;font-size:13px;text-align:center;color:var(--muted);padding:4px 0}
+.cal-c{min-height:104px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 5px 6px}
+.cal-c.off{background:transparent;border-color:transparent}
+.cal-c.today{border:2px solid var(--blue);background:#F5F9FC}
+.cal-d{font-weight:700;font-size:13px;color:var(--muted)}
+@media (max-width:900px){.cal-c{min-height:84px;padding:2px}.cal-c button{font-size:10.5px!important;padding:2px 3px!important}}

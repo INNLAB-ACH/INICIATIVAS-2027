@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>A2 · Pago desde la app del comercio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D1B2A;--blue:#005FA3;--blue-d:#004A80;--blue-l:#A8C4D8;--bg:#F3F6F9;
+  --ink:#0D1B2A;--muted:#4A5A6A;--line:#D5E0EA;--field:#7D8E9F;
+  --ok:#1E7A46;--ok-bg:#E3F1E8;--err:#B3261E;--err-bg:#FCE9E7;--warn:#7A4F00;--warn-bg:#FDF0D5;
+  --bank:#1E5E5A;--bank-d:#164845;--bank-l:#E4F0EF;
+  --hf:'Manrope',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:#DCE4EC;font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--hf);margin:0;line-height:1.2}
+h1{font-weight:800;font-size:23px;margin:4px 0 12px}
+h1:focus{outline:none}
+h2{font-weight:700;font-size:17px;margin:0 0 10px}
+h3{font-weight:700;font-size:15px;margin:16px 0 8px}
+p{margin:0 0 10px}
+button,input,select{font-family:inherit;font-size:16px;color:inherit}
+:focus-visible{outline:3px solid var(--blue-d);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Escenario y marco */
+.stage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:46px;box-shadow:0 0 0 11px var(--navy),0 24px 70px rgba(13,27,42,.3);overflow:hidden;position:relative;display:flex;flex-direction:column}
+@media (max-width:520px),(max-height:700px) and (max-width:900px){
+  .stage{padding:0;min-height:100dvh}
+  .phone{width:100vw;height:100vh;height:100dvh;border-radius:0;box-shadow:none}
+}
+.band{flex:none;background:var(--navy);color:#fff;font-size:12.5px;text-align:center;padding:14px 8px 7px;letter-spacing:.02em;user-select:none}
+@media (max-width:520px){.band{padding-top:max(7px,env(safe-area-inset-top))}}
+.screen{flex:1;overflow-y:auto;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch;position:relative}
+.homebar{flex:none;height:30px;min-height:30px;border:0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0 0 env(safe-area-inset-bottom);position:relative}
+.homebar::before{content:"";position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:180px;height:44px}
+.homebar span{width:134px;height:5px;border-radius:3px;background:var(--navy)}
+.phone.on-home .homebar{background:var(--navy)}
+.phone.on-home .homebar span{background:#fff}
+
+/* Barras */
+.appbar{flex:none;display:flex;align-items:center;gap:6px;padding:6px 10px;min-height:58px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.appbar.bank{background:var(--bank);color:#fff;border-bottom:0}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--hf);font-weight:800;font-size:16px;flex:1;min-width:0}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{min-width:44px;height:44px;border:0;background:transparent;border-radius:10px;cursor:pointer;color:inherit;display:flex;align-items:center;gap:2px;padding:0 8px 0 2px;font-weight:600;font-size:15px;flex:none}
+.back:hover{background:rgba(0,95,163,.08)}
+.appbar.bank .back:hover{background:rgba(255,255,255,.12)}
+.back-sp{width:4px}
+.prof{min-width:44px;height:44px;border:0;background:transparent;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0 8px;font-weight:600;font-size:14px;color:var(--blue-d);flex:none}
+.prof:hover{background:#EDF2F6}
+.mark{width:32px;height:32px;border-radius:9px;background:var(--navy);display:grid;place-items:center;flex:none}
+.bmark{width:30px;height:30px;border-radius:8px;background:#fff;color:var(--bank);display:grid;place-items:center;font-family:var(--hf);font-weight:800;font-size:15px;flex:none}
+.urlbar{font-size:12.5px;color:var(--muted);background:#EDF2F6;padding:5px 12px;display:flex;gap:6px;align-items:center;border-bottom:1px solid var(--line)}
+
+/* Contenido */
+.content{padding:18px 16px 20px;flex:1}
+.footer{position:sticky;bottom:0;padding:12px 16px 14px;background:#fff;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;z-index:4}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:14px;padding:7px 0;border-bottom:1px solid #EDF2F6}
+.row:last-child{border-bottom:0}
+.row .k{color:var(--muted)}
+.row .v{text-align:right;font-weight:600}
+.row .v.strong{font-family:var(--hf);font-weight:800}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.amount{font-family:var(--hf);font-weight:800;font-size:28px;letter-spacing:-.01em}
+.center{display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 0 8px}
+.grow{flex:1;min-width:0}
+.notice{background:#EAF2F8;border:1px solid var(--blue-l);border-radius:12px;padding:10px 12px;font-size:15px;margin-bottom:14px}
+.notice.warn{background:var(--warn-bg);border-color:#E9C98A;color:#3D2A00}
+.datechip{display:inline-block;background:var(--navy);color:#fff;border-radius:20px;padding:4px 12px;font-size:13.5px;font-weight:600;margin-bottom:8px}
+.item{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #EDF2F6;font-size:15px}
+.item:last-child{border-bottom:0}
+.item .q{color:var(--muted);font-size:13.5px;display:block}
+.item .p{font-weight:600;white-space:nowrap}
+.totrow{display:flex;justify-content:space-between;align-items:center;padding-top:8px}
+.tokenbox{display:flex;gap:10px;align-items:flex-start;background:var(--ok-bg);border:1px solid #A9D3B8;border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.footer .tokenbox{margin-bottom:0;padding:8px 12px}
+.tokenbox svg{flex:none;margin-top:2px}
+.tokenbox .link{min-height:32px;padding:0;margin-left:2px}
+.pm{display:flex;align-items:center;gap:12px}
+.bankstrip{display:flex;gap:10px;align-items:center;background:var(--bank-l);border:1px solid #B8D6D3;border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.bankstrip .bmark{background:var(--bank);color:#fff}
+.bankstrip strong{display:block;font-family:var(--hf);font-size:15px}
+.bankstrip span.d{display:block;font-size:13.5px;color:var(--muted)}
+.chip{display:inline-block;font-size:12.5px;font-weight:700;border-radius:20px;padding:2px 10px;margin-top:3px}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.off{background:#EDF2F6;color:var(--muted)}
+.auth-h{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.auth-h strong{display:block;font-family:var(--hf);font-size:16px}
+.mlogo{width:40px;height:40px;border-radius:10px;background:var(--navy);display:grid;place-items:center;flex:none}
+.mlogo.t{background:#5B4A8B;color:#fff;font-family:var(--hf);font-weight:800;font-size:14px}
+.menu{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.menu button{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:54px;border:0;border-bottom:1px solid #EDF2F6;background:#fff;text-align:left;cursor:pointer;padding:6px 16px;font-weight:600;font-size:16px}
+.menu button:last-child{border-bottom:0}
+.menu button:hover{background:#F5F9FC}
+.menu button .d{display:block;font-weight:400;font-size:13.5px;color:var(--muted)}
+.qa{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.qa button{min-height:76px;border:1px solid var(--line);background:#fff;border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;padding:10px 14px;font-weight:600;font-size:15px;text-align:left;color:var(--ink)}
+.qa button:hover{border-color:var(--bank)}
+.qa svg{color:var(--bank)}
+.acct{background:var(--bank);color:#fff;border-radius:16px;padding:16px}
+.acct .muted{color:#CFE3E1}
+.mov{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDF2F6;font-size:15px}
+.mov:last-child{border-bottom:0}
+.mov .d{display:block;font-size:13px;color:var(--muted)}
+.mov .neg{font-weight:700;white-space:nowrap}
+.mov .pos{font-weight:700;color:var(--ok);white-space:nowrap}
+
+/* Inicio del celular */
+.home{flex:1;background:var(--navy);color:#fff;padding:26px 22px;display:flex;flex-direction:column}
+.clock{font-family:var(--hf);font-weight:800;font-size:56px;text-align:center;margin-top:18px;line-height:1}
+.hdate{text-align:center;color:#C9D7E3;margin:6px 0 34px}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 10px}
+.app{border:0;background:transparent;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:12.5px;min-height:44px;padding:4px 0;border-radius:12px}
+.app .ic{width:60px;height:60px;border-radius:16px;display:grid;place-items:center;background:#2A3A4C}
+.app.ma .ic{background:#fff}
+.app.ba .ic{background:var(--bank)}
+.app.dim .ic{background:#223244}
+.hint-home{margin-top:auto;text-align:center;color:#C9D7E3;font-size:14px}
+
+/* Botones */
+.btn{min-height:50px;border-radius:12px;font-family:var(--hf);font-weight:700;font-size:16px;border:0;cursor:pointer;width:100%;padding:0 16px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-d)}
+.btn-bank{background:var(--bank);color:#fff}
+.btn-bank:hover{background:var(--bank-d)}
+.btn-secondary{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+.btn-secondary:hover{background:#EAF2F8}
+.btn-danger{background:var(--err);color:#fff}
+.btn-danger:hover{background:#8E1D17}
+.btn-revoke{background:#fff;color:var(--err);border:2px solid var(--err);margin-top:10px}
+.btn-revoke:hover{background:var(--err-bg)}
+.btn.sm{min-height:44px;width:auto;font-size:14px}
+.link{background:none;border:0;color:var(--blue);font-weight:600;text-decoration:underline;text-underline-offset:3px;min-height:44px;cursor:pointer;padding:0 2px;font-size:15px}
+.iconbtn{width:44px;height:44px;border:0;background:transparent;border-radius:10px;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
+.iconbtn:hover{background:#EDF2F6}
+
+/* Formularios */
+label{font-weight:600;display:block;margin:16px 0 6px}
+fieldset{border:0;padding:0;margin:14px 0 0}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+input[type=text],input[type=password]{width:100%;min-height:50px;border:1.5px solid var(--field);border-radius:10px;padding:0 12px;background:#fff}
+input[aria-invalid=true]{border-color:var(--err);border-width:2px}
+.hint{font-size:14px;color:var(--muted);margin-top:5px}
+.err{color:var(--err);font-size:14.5px;margin-top:6px;font-weight:600}
+.err:empty{display:none}
+label.opt{display:flex;align-items:flex-start;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:12px;min-height:50px;margin:0 0 8px;cursor:pointer;background:#fff;font-weight:600}
+label.opt:has(input:checked){border-color:var(--blue);background:#F5F9FC}
+label.opt input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--blue);flex:none}
+label.opt .d{display:block;font-weight:400;color:var(--muted);font-size:14px}
+label.opt.remember{font-weight:400;margin-top:4px}
+
+/* Superposiciones */
+.overlay{position:absolute;inset:0;background:rgba(243,246,249,.97);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px}
+.overlay.dark{background:var(--navy);color:#fff}
+.overlay.dark .muted{color:#C9D7E3}
+.ov-t{font-family:var(--hf);font-weight:800;font-size:19px;margin:16px 0 6px}
+.overlay .btn{max-width:320px;margin-top:14px}
+.spinner{width:46px;height:46px;border-radius:50%;border:4px solid var(--blue-l);border-top-color:var(--blue);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fp{color:var(--bank)}
+.fp path{stroke-dasharray:70;stroke-dashoffset:70;animation:draw 1.3s ease forwards}
+.fp path:nth-child(2){animation-delay:.1s}.fp path:nth-child(3){animation-delay:.2s}.fp path:nth-child(4){animation-delay:.3s}.fp path:nth-child(5){animation-delay:.15s}.fp path:nth-child(6){animation-delay:.25s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.fp-ring{width:132px;height:132px;border-radius:50%;background:#fff;border:2px solid #B8D6D3;display:grid;place-items:center;position:relative;overflow:hidden}
+.fp-ring::after{content:"";position:absolute;left:0;right:0;height:3px;background:var(--bank);opacity:.55;top:10%;animation:scan 1.5s ease-in-out}
+@keyframes scan{0%{top:10%}50%{top:88%}100%{top:10%}}
+#sheetWrap{position:absolute;inset:0;z-index:40}
+.backdrop{position:absolute;inset:0;background:rgba(13,27,42,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:88%;overflow-y:auto;background:#fff;border-radius:20px 20px 0 0;padding:8px 16px 20px}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;background:#fff;padding-top:8px;z-index:1}
+.sheet-h h2{margin:0}
+.sheet ul{padding-left:20px;margin:8px 0 12px}
+.sheet li{margin-bottom:8px}
+.sheet .btn{margin-top:8px}
+.push{position:absolute;top:10px;left:10px;right:10px;background:#fff;border-radius:16px;box-shadow:0 10px 34px rgba(13,27,42,.28);padding:10px 14px 2px;z-index:60;animation:drop .3s ease}
+@keyframes drop{from{transform:translateY(-16px);opacity:0}}
+.push-h{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);align-items:center}
+.push-h strong{display:flex;gap:6px;align-items:center;color:var(--ink)}
+.push-h .bmark{width:20px;height:20px;border-radius:5px;background:var(--bank);color:#fff;font-size:11px}
+.push p{margin:4px 0 0;font-size:15px}
+.toast{position:absolute;left:16px;right:16px;bottom:110px;background:var(--navy);color:#fff;border-radius:12px;padding:12px 14px;z-index:70;text-align:center;font-weight:600}
+
+/* Paneles del moderador */
+.panel{position:fixed;inset:0;background:rgba(13,27,42,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.pbox{background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:92vh;overflow:auto;padding:16px 20px 20px}
+.pbox.wide{max-width:1100px}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.ph h2{margin:0;font-size:19px}
+.pbox label.opt{align-items:center;padding:8px 12px}
+.jumps{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px}
+.jumps button{min-height:44px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;text-align:left;padding:4px 10px;font-size:14px}
+.jumps button:hover{border-color:var(--blue)}
+.pactions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.logt th,.logt td{font-size:12.5px;padding:6px 8px;border-bottom:1px solid #EDF2F6;text-align:left;white-space:nowrap}
+.logt td:last-child{white-space:normal;word-break:break-all;min-width:240px}
+.logt thead th{position:sticky;top:0;background:#F5F9FC}
+.logt-wrap{max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%}
+.kbd{font-family:ui-monospace,monospace;background:#EDF2F6;border-radius:5px;padding:1px 6px;font-size:13px}
+.state{background:#F5F9FC;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;margin:8px 0}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="band" id="band" role="note">Prototipo de investigación · datos ficticios</div>
+    <main class="screen" id="screen"></main>
+    <button class="homebar" id="homebar" data-act="goHome" aria-label="Ir a la pantalla de inicio del celular"><span aria-hidden="true"></span></button>
+    <div id="ov" class="overlay" hidden></div>
+    <div id="sheetWrap" hidden><div class="backdrop" data-act="closeSheet"></div><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t"></div></div>
+    <div id="push" class="push" hidden role="status" aria-live="polite"></div>
+    <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+  </div>
+</div>
+<div id="mod" class="panel" hidden></div>
+<div id="logp" class="panel" hidden></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Datos del escenario (todo ficticio) ---------- */
+var TOPE=300000, DOMI=5900, SALDO_BASE=2504750;
+var M={name:'Mercado Aurora',nit:'901.337.205-4'};
+var CUENTA='Cuenta de ahorros •••• 4821';
+var ORD={
+  1:{title:'Tu carrito',ref:'MA-104582',off:0,n:12,items:[
+    ['Arroz blanco','5 kg',21900],['Aceite de girasol','3 L',32500],['Huevos AA','30 unidades',18900],['Leche entera','6 × 1,1 L',23400],
+    ['Café molido','500 g',16800],['Pechuga de pollo','1 kg',17900],['Plátano verde','5 unidades',6500],['Tomate chonto','1 kg',4900],
+    ['Queso campesino','500 g',12300],['Pan tajado','600 g',6900],['Detergente líquido','2 L',14200],['Panela','2 × 500 g',4200]]},
+  2:{title:'Tu carrito',ref:'MA-105217',off:7,n:9,items:[
+    ['Arroz blanco','5 kg',21900],['Huevos AA','30 unidades',18900],['Leche entera','6 × 1,1 L',23400],['Pechuga de pollo','1 kg',17900],
+    ['Pan tajado','600 g',6900],['Tomate chonto','1 kg',4900],['Café molido','500 g',16800],['Frutas surtidas','1,5 kg',14000],['Queso campesino','500 g',12300]]},
+  3:{title:'Mercado del mes',ref:'MA-105640',off:10,n:28,items:[
+    ['Despensa','11 productos',198400],['Carnes y huevos','6 productos',142300],['Lácteos','5 productos',68900],['Aseo y hogar','6 productos',64500]]}
+};
+for(var o in ORD){ORD[o].sub=ORD[o].items.reduce(function(a,i){return a+i[2];},0);ORD[o].total=ORD[o].sub+DOMI;}
+var CART_ROUTE={1:'p1',2:'p6',3:'c3'};
+var SK='a2_pago_app_comercio_estado', LS_KEY='a2_pago_app_comercio_log';
+
+/* ---------- Utilidades ---------- */
+function $(s){return document.querySelector(s);}
+function money(n){return '$'+String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+function pad(n){return String(n).padStart(2,'0');}
+function fdate(d){return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();}
+function ftime(d){var h=d.getHours(),ap=h<12?'a. m.':'p. m.';h=h%12||12;return h+':'+pad(d.getMinutes())+' '+ap;}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function rnd(n){var s='';for(var i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s.replace(/^0/,'7');}
+function dayOff(k){var d=new Date();d.setDate(d.getDate()+k);return d;}
+function orderDate(o){return dayOff(ORD[o].off);}
+
+/* ---------- Estado (persiste en la pestaña con sessionStorage) ---------- */
+function readQuery(){
+  var q=new URLSearchParams(location.search);
+  return {v:(q.get('v')||'A').toUpperCase()==='B'?'B':'A',token:q.get('token')==='1'};
+}
+function freshState(keep){
+  var q=readQuery();
+  var s={qsig:location.search,variant:q.v,
+    token:null,                                         /* autorización de Mercado Aurora */
+    tienda:{active:true,created:'03/07/2026',tope:100000,revoked:null}, /* autorización previa (solo en la app del banco) */
+    order:1,useToken:true,remember:false,p4from:'p3',authMode:'huella',
+    txns:[],last:null,lastMerchant:'p1',perfilFrom:'p1',p7from:'perfil',p7bfrom:'banco',
+    forceErr:keep?keep.forceErr:false,failed:{}};
+  if(q.token&&q.v==='B')s.token={active:true,created:fdate(new Date()),tope:TOPE,revoked:null};
+  return s;
+}
+var S=null;
+try{var sv=JSON.parse(sessionStorage.getItem(SK)||'null');if(sv&&sv.qsig===location.search)S=sv;}catch(_){}
+if(!S)S=freshState();
+function save(){try{sessionStorage.setItem(SK,JSON.stringify(S));}catch(_){}}
+function tokenActive(){return S.variant==='B'&&S.token&&S.token.active;}
+function tokenState(){return !S.token?'no_existe':(S.token.active?'activa':'revocada');}
+
+/* ---------- Registro de eventos ---------- */
+var stored=[];
+try{stored=JSON.parse(localStorage.getItem(LS_KEY)||'[]');if(!Array.isArray(stored))stored=[];}catch(_){stored=[];}
+window.__log=stored;
+var SID='S'+Date.now().toString(36).toUpperCase();
+var cur=null,enteredAt=0,tok=0,trail=[];
+var task={t0:0,order:0,screens:0,errors:0,done:true};
+var CODES={p1:'P1',p2:'P2',p3:'P3',p4:'P4',p5:'P5',p6:'P6',c3:'P6-PEDIDO3',p8:'P8',p7:'P7-COMERCIO',p7b:'P7-BANCO',perfil:'PERFIL',mp:'MEDIOS-PAGO',
+  banco:'BANCO-INICIO',bseg:'BANCO-SEGURIDAD',home:'CELULAR-INICIO',ar:'A-REDIRECCION',al:'A-BANCO-INGRESO',ac:'A-BANCO-CONFIRMA',fin:'FIN'};
+function code(r){return CODES[r]||String(r||'').toUpperCase();}
+function log(accion,detalle,pantalla){
+  var e={ts:new Date().toISOString(),sesion:SID,variante:S.variant,pantalla:pantalla||code(cur),accion:accion,
+    detalle:detalle==null?'':(typeof detalle==='string'?detalle:JSON.stringify(detalle))};
+  window.__log.push(e);
+  try{localStorage.setItem(LS_KEY,JSON.stringify(window.__log));}catch(_){}
+  if(!$('#logp').hidden)renderLog();
+}
+function vErr(campos){task.errors++;log('error_validacion',{campos:campos});}
+
+/* ---------- Íconos ---------- */
+var I={
+  back:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  chev:'<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="#7D8E9F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  user:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  lock:'<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  sun:function(c,s){s=s||22;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22a10 10 0 0 1 20 0z" fill="'+c+'"/><path d="M16 5v4M6.5 9.5l2.8 2.8M25.5 9.5l-2.8 2.8M3 17h3.5M25.5 17H29" stroke="'+c+'" stroke-width="2.4" stroke-linecap="round"/><path d="M3 25h26" stroke="'+c+'" stroke-width="2.4" stroke-linecap="round"/></svg>';},
+  ok:'<svg width="68" height="68" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#E3F1E8"/><path d="M14 25l7 7 13-15" fill="none" stroke="#1E7A46" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  alert:'<svg width="68" height="68" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#FDF0D5"/><path d="M24 13v14" stroke="#7A4F00" stroke-width="3.5" stroke-linecap="round"/><circle cx="24" cy="34" r="2.4" fill="#7A4F00"/></svg>',
+  shield:'<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z" fill="none" stroke="#1E7A46" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="#1E7A46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  close:'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  fp:'<svg class="fp" viewBox="0 0 64 64" width="92" height="92" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 28a20 20 0 0 1 40 0"/><path d="M19 44c-2-4-3-8-3-12a16 16 0 0 1 32 0c0 2 0 3-.2 5"/><path d="M25 49c-2-5-3-10-3-16a10 10 0 0 1 20 0c0 5-.5 10-2 14"/><path d="M32 33c0 7-1 13-4 18"/><path d="M37 35c0 6-1 11-3 16"/><path d="M46 42c-.4 3-1 6-2 9"/></g></svg>',
+  send:'<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  bill:'<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  key:'<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 12h9M18 12v3M21 12v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  lockb:'<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+};
+function row(k,v,strong){return '<div class="row"><span class="k">'+k+'</span><span class="v'+(strong?' strong':'')+'">'+v+'</span></div>';}
+function successHead(t,sub){return '<div class="center">'+I.ok+'<h1>'+t+'</h1><p class="muted">'+sub+'</p></div>';}
+
+/* ---------- Pantallas ---------- */
+var R={};
+
+/* Carritos: P1 (pedido 1), P6 (pedido 2), pedido 3 (caso tope) */
+function cartScreen(o){return function(){
+  S.order=o;var O=ORD[o],one=tokenActive()&&S.useToken;
+  var chip=o===2?'Una semana después · '+fdate(orderDate(2)):(o===3?'Diez días después · '+fdate(orderDate(3)):'');
+  var items=O.items.map(function(i){return '<div class="item"><span>'+i[0]+'<span class="q">'+i[1]+'</span></span><span class="p">'+money(i[2])+'</span></div>';}).join('');
+  var tb=one?'<div class="tokenbox">'+I.shield+'<div class="grow small"><strong>Usando tu autorización guardada</strong> · <button class="link" data-act="cambiar">Cambiar</button><br><span class="muted">Pagas desde Banco Andino, '+CUENTA.toLowerCase()+'.</span></div></div>':'';
+  return {bar:'merchant',back:null,
+    body:(chip?'<span class="datechip">'+chip+'</span>':'')+'<h1>'+O.title+'</h1><p class="muted small">'+O.n+' productos · entrega a domicilio</p>'+
+    '<div class="card">'+items+'</div>'+
+    '<div class="card">'+row('Subtotal',money(O.sub))+row('Domicilio',money(DOMI))+'<div class="totrow"><span class="muted">Total</span><span class="amount">'+money(O.total)+'</span></div></div>',
+    foot:one?tb+'<button class="btn btn-primary" data-act="payToken" data-primary>Pagar '+money(O.total)+'</button>'
+            :'<button class="btn btn-primary" data-act="cartPay" data-primary>Pagar</button>'};
+};}
+R.p1=cartScreen(1);R.p6=cartScreen(2);R.c3=cartScreen(3);
+
+/* P2: selección del medio */
+R.p2=function(){var O=ORD[S.order];
+  if(S.variant==='A')return {bar:'merchant',back:CART_ROUTE[S.order],title:'Pago',
+    body:'<h1>¿Cómo quieres pagar?</h1><p class="muted">Total del pedido: <strong style="color:var(--ink)">'+money(O.total)+'</strong></p>'+
+    '<label class="opt"><input type="radio" name="medio" checked><span><strong>PSE · Débito desde tu banco</strong><span class="d">Te llevaremos a la página de tu banco para pagar. Al terminar vuelves a Mercado Aurora.</span></span></label>'+
+    '<button class="link" data-act="otroMedio">Usar otro medio de pago</button>',
+    foot:'<button class="btn btn-primary" data-act="p2go" data-primary>Continuar</button>'};
+  return {bar:'merchant',back:CART_ROUTE[S.order],title:'Pago',
+    body:'<h1>¿Cómo quieres pagar?</h1><p class="muted">Total del pedido: <strong style="color:var(--ink)">'+money(O.total)+'</strong></p>'+
+    '<label class="opt"><input type="radio" name="medio" checked><span><strong>Pagar desde tu cuenta Banco Andino</strong><span class="d">'+CUENTA+' · Sin salir de la app</span></span></label>'+
+    '<button class="link" data-act="otroMedio">Usar otro banco o medio de pago</button>',
+    foot:'<button class="btn btn-primary" data-act="p2go" data-primary>Continuar</button>'};
+};
+
+/* P3: resumen de autorización (variante B) */
+R.p3=function(){var O=ORD[S.order];
+  var rem=tokenActive()?'<div class="notice">Ya tienes una autorización guardada para Mercado Aurora. Esta compra se autorizará solo una vez.</div>'
+    :'<label class="opt remember"><input type="checkbox" id="remember"'+(S.remember?' checked':'')+'><span>Recordar esta autorización para mis próximas compras en Mercado Aurora hasta '+money(TOPE)+' por compra</span></label>'+
+     '<button class="link" data-act="queSignifica">¿Qué significa?</button>';
+  return {bar:'merchant',back:'p2',title:'Pago',
+    body:'<h1>Revisa y autoriza tu pago</h1><div class="card">'+row('Comercio',M.name)+row('NIT',M.nit)+row('Valor',money(O.total),true)+row('Referencia',O.ref)+
+    row('Cuenta de origen','Banco Andino<br>Ahorros •••• 4821')+row('Fecha',fdate(orderDate(S.order)))+'</div>'+rem,
+    foot:'<button class="btn btn-primary" data-act="p3go" data-primary>Autorizar pago de '+money(O.total)+'</button>'};
+};
+
+/* P4: autenticación (variante B) */
+R.p4=function(){var O=ORD[S.order],huella=S.authMode==='huella';
+  var willSave=S.p4from==='p3'&&S.remember&&!tokenActive();
+  return {bar:'merchant',back:S.p4from,title:'Pago',
+    body:'<div class="bankstrip"><span class="bmark" aria-hidden="true">A</span><div><strong>Verificación de Banco Andino</strong><span class="d">Dentro de Mercado Aurora · conexión segura</span></div></div>'+
+    '<h1>Confirma que eres tú</h1><div class="card">'+row('Pago a',M.name)+row('Valor',money(O.total),true)+row('Desde',CUENTA)+'</div>'+
+    (willSave?'<p class="small muted">También guardarás tu autorización para compras en Mercado Aurora de hasta '+money(TOPE)+'.</p>':'')+
+    (huella?'<p>Usa la huella que registraste en la app de Banco Andino.</p><button class="link" data-act="authMode" data-m="clave">Prefiero usar mi clave</button>'
+      :'<label for="f-clave">Clave de Banco Andino</label><input id="f-clave" type="password" inputmode="numeric" autocomplete="off" aria-describedby="h-clave e-clave">'+
+       '<div class="hint" id="h-clave">Escribe cualquier clave. En esta prueba no se guarda ni se envía.</div><div class="err" id="e-clave" role="alert"></div>'+
+       '<button class="link" data-act="authMode" data-m="huella">Usar mi huella</button>'),
+    foot:'<button class="btn btn-bank" data-act="p4go" data-primary>'+(huella?'Autorizar con huella':'Autorizar con clave')+'</button>'};
+};
+
+/* P5: confirmación */
+R.p5=function(){var L=S.last;if(!L){return R.fin();}
+  var O=ORD[L.order],extra='';
+  if(L.mode==='un_toque')extra='<div class="tokenbox">'+I.shield+'<div class="small"><strong>Pagaste con tu autorización guardada.</strong><br>Banco Andino te avisó de este cobro.</div></div>';
+  if(L.created)extra='<div class="card"><h2>Guardaste tu autorización</h2><p class="small">Tus próximas compras en Mercado Aurora de hasta '+money(TOPE)+' se pagarán en un toque. Si una compra supera ese valor, te pediremos huella o clave.</p><p class="small muted" style="margin:0">Puedes revocarla cuando quieras en Perfil › Mis autorizaciones de pago, o en la app de Banco Andino.</p></div>';
+  var next={1:'Seguir comprando',2:'Seguir comprando',3:'Terminar'}[L.order];
+  return {bar:'merchant',back:null,
+    body:successHead('Pago aprobado','Tu pedido de Mercado Aurora está confirmado. Llega hoy entre 4:00 y 6:00 p. m.')+
+    '<div class="card">'+row('Valor',money(O.total),true)+row('Referencia',O.ref)+row('Número de aprobación',L.aprob)+row('Fecha',L.date)+row('Pagado desde','Banco Andino<br>Ahorros •••• 4821')+'</div>'+extra,
+    foot:(tokenActive()?'<button class="btn btn-secondary" data-act="toP7">Ver mis autorizaciones</button>':'')+'<button class="btn btn-primary" data-act="p5next" data-primary>'+next+'</button>',
+    after:function(){if(S.variant==='B'&&L.fresh){L.fresh=false;save();
+      showPush(L.mode==='un_toque'?'Pagaste '+money(O.total)+' a Mercado Aurora con tu autorización guardada. Si no reconoces este pago, revócala desde la app.':'Pagaste '+money(O.total)+' a Mercado Aurora desde tu '+CUENTA.toLowerCase()+'.');}}};
+};
+
+/* P8: el cobro supera el tope */
+R.p8=function(){var O=ORD[S.order];
+  return {bar:'merchant',back:CART_ROUTE[S.order],title:'Pago',
+    body:'<div class="center">'+I.alert+'<h1>Esta compra necesita tu autorización</h1><p class="muted">El valor supera el tope que guardaste para Mercado Aurora. Por tu seguridad, confírmala con tu huella o clave. No se ha hecho ningún cobro.</p></div>'+
+    '<div class="card">'+row('Valor de esta compra',money(O.total),true)+row('Tu tope por compra',money(S.token?S.token.tope:TOPE))+row('Diferencia',money(O.total-(S.token?S.token.tope:TOPE)))+'</div>'+
+    '<p class="small muted">Tu autorización guardada sigue activa para compras de hasta '+money(TOPE)+'.</p>'+
+    '<button class="link" data-act="topeCancel">Volver al carrito</button>',
+    foot:'<button class="btn btn-primary" data-act="p8go" data-primary>Autorizar esta compra</button>',
+    after:function(){log('tope_excedido_visto',{valor:O.total,tope:TOPE});}};
+};
+
+/* P7 en la app del comercio */
+function authCard(c,from){
+  var t=c==='ma'?S.token:S.tienda,name=c==='ma'?'Mercado Aurora':'Tienda Aurora';
+  var logo=c==='ma'?'<span class="mlogo" aria-hidden="true">'+I.sun('#fff',24)+'</span>':'<span class="mlogo t" aria-hidden="true">TA</span>';
+  return '<div class="card"><div class="auth-h">'+logo+'<div><strong>'+name+'</strong><span class="chip '+(t.active?'ok':'off')+'">'+(t.active?'Activa':'Revocada')+'</span></div></div>'+
+    row('Cuenta','Banco Andino · ahorros •••• 4821')+row('Tope por compra',money(t.tope))+row('Creada el',t.created)+(t.revoked?row('Revocada el',t.revoked):'')+
+    (t.active?'<button class="btn btn-revoke" data-act="revoke" data-c="'+c+'" data-from="'+from+'" aria-label="Revocar la autorización de '+name+'">Revocar</button>':'')+'</div>';
+}
+R.p7=function(){
+  var body='<h1>Mis autorizaciones de pago</h1><p class="muted">Las autorizaciones te permiten pagar en Mercado Aurora en un toque, sin huella ni clave, hasta el tope que elegiste.</p>';
+  body+=(S.variant==='B'&&S.token)?authCard('ma','comercio'):'<div class="card"><h2>No tienes autorizaciones guardadas</h2><p class="small muted" style="margin:0">Puedes crear una la próxima vez que pagues desde tu cuenta Banco Andino.</p></div>';
+  return {bar:'merchant',back:S.p7from,title:'Perfil',body:body};
+};
+R.perfil=function(){return {bar:'merchant',back:S.perfilFrom,title:'Perfil',noProf:true,
+  body:'<h1>Hola, Laura</h1><p class="muted">laura.gomez@correo.co · Cali</p><div class="menu">'+
+  ['Mis pedidos','Direcciones de entrega'].map(function(t){return '<button data-act="na" data-t="'+t+'"><span>'+t+'</span>'+I.chev+'</button>';}).join('')+
+  '<button data-act="toMp"><span>Medios de pago</span>'+I.chev+'</button>'+
+  '<button data-act="toP7"><span>Mis autorizaciones de pago<span class="d">Pagos en un toque guardados</span></span>'+I.chev+'</button>'+
+  ['Notificaciones','Ayuda'].map(function(t){return '<button data-act="na" data-t="'+t+'"><span>'+t+'</span>'+I.chev+'</button>';}).join('')+'</div>'};};
+R.mp=function(){var st=tokenActive()?'Activa · hasta '+money(TOPE)+' por compra':'No tienes una autorización guardada';
+  return {bar:'merchant',back:'perfil',title:'Perfil',noProf:true,
+  body:'<h1>Medios de pago</h1><div class="card"><div class="auth-h"><span class="mlogo" style="background:var(--bank)" aria-hidden="true"><span style="color:#fff;font-family:var(--hf);font-weight:800">A</span></span><div><strong>Banco Andino</strong><span class="muted small">'+CUENTA+'</span></div></div>'+
+  row('Pago en un toque',st)+'<button class="link" data-act="toP7">Administrar autorizaciones</button></div>'};};
+
+/* Variante A: redirección al banco */
+R.ar=function(){return {bar:'browser',back:null,
+  body:'<div class="center" style="padding-top:90px"><div class="spinner" aria-hidden="true"></div><h1 style="margin-top:22px">Te estamos llevando a tu banco</h1><p><strong>Banco Andino</strong></p><p class="muted">Saldrás de Mercado Aurora por un momento. No cierres esta ventana.</p></div>',
+  after:function(){var t=tok;setTimeout(function(){if(t===tok)go('al');},1800);}};};
+R.al=function(){return {bar:'bankweb',back:'p2',
+  body:'<h1>Ingresa a tu banca en línea</h1><div class="notice">Esto es una prueba: puedes escribir cualquier usuario y cualquier clave.</div>'+
+  '<label for="f-user">Usuario</label><input id="f-user" type="text" autocomplete="off" aria-describedby="h-user e-user"><div class="hint" id="h-user">Escribe cualquier usuario.</div><div class="err" id="e-user" role="alert"></div>'+
+  '<label for="f-pass">Clave</label><input id="f-pass" type="password" autocomplete="off" aria-describedby="h-pass e-pass"><div class="hint" id="h-pass">Escribe cualquier clave.</div><div class="err" id="e-pass" role="alert"></div>',
+  foot:'<button class="btn btn-bank" data-act="alGo" data-primary>Ingresar</button>'};};
+R.ac=function(){var O=ORD[S.order];return {bar:'bankweb',back:'al',
+  body:'<h1>Confirma tu pago</h1><div class="card">'+row('Comercio',M.name)+row('NIT',M.nit)+row('Referencia',O.ref)+row('Cuenta a debitar',CUENTA)+row('Fecha',fdate(orderDate(S.order)))+row('Valor',money(O.total),true)+'</div>'+
+  '<p class="small muted">Al pagar volverás automáticamente a Mercado Aurora.</p>',
+  foot:'<button class="btn btn-bank" data-act="acGo" data-primary>Pagar '+money(O.total)+'</button>'};};
+
+/* App ficticia de Banco Andino */
+function saldo(){return SALDO_BASE-S.txns.reduce(function(a,t){return a+t.v;},0);}
+R.banco=function(){
+  var movs=S.txns.slice().reverse().map(function(t){return '<div class="mov"><span>'+esc(t.d)+'<span class="d">'+t.f+'</span></span><span class="neg">−'+money(t.v)+'</span></div>';}).join('');
+  movs+='<div class="mov"><span>Tienda Aurora<span class="d">'+fdate(dayOff(-6))+'</span></span><span class="neg">−'+money(64900)+'</span></div>'+
+        '<div class="mov"><span>Transferencia recibida<span class="d">'+fdate(dayOff(-9))+'</span></span><span class="pos">+'+money(1200000)+'</span></div>';
+  return {bar:'bankapp',back:null,
+  body:'<h1>Hola, Laura</h1><div class="acct"><div class="muted small">'+CUENTA+'</div><div class="small" style="margin-top:8px">Saldo disponible</div><div class="amount">'+money(saldo())+'</div></div>'+
+  '<div class="qa"><button data-act="na" data-t="Transferir">'+I.send+'Transferir</button><button data-act="na" data-t="Pagar facturas">'+I.bill+'Pagar facturas</button>'+
+  '<button data-act="toP7b">'+I.key+'Autorizaciones a comercios</button><button data-act="toBseg">'+I.lockb+'Seguridad</button></div>'+
+  '<div class="card"><h2>Movimientos recientes</h2>'+movs+'</div>'};
+};
+R.bseg=function(){return {bar:'bankapp',back:'banco',title:'Seguridad',
+  body:'<h1>Seguridad</h1><div class="menu"><button data-act="na" data-t="Cambiar clave"><span>Cambiar clave</span>'+I.chev+'</button><button data-act="na" data-t="Huella y reconocimiento"><span>Huella y reconocimiento</span>'+I.chev+'</button>'+
+  '<button data-act="toP7b"><span>Autorizaciones a comercios<span class="d">Comercios que pueden cobrarte sin clave</span></span>'+I.chev+'</button><button data-act="na" data-t="Dispositivos"><span>Dispositivos</span>'+I.chev+'</button></div>'};};
+R.p7b=function(){
+  var body='<h1>Autorizaciones a comercios</h1><p class="muted">Estos comercios pueden cobrarte sin pedir tu huella o clave, hasta el tope de cada uno.</p>';
+  if(S.variant==='B'&&S.token)body+=authCard('ma','banco');
+  body+=authCard('ta','banco');
+  return {bar:'bankapp',back:S.p7bfrom,title:'Autorizaciones',body:body};
+};
+
+/* Inicio del celular */
+R.home=function(){var d=new Date();
+  function app(cls,act,label,ic){return '<button class="app '+cls+'" data-act="'+act+'" data-t="'+label+'"><span class="ic" aria-hidden="true">'+ic+'</span>'+label+'</button>';}
+  var dim='<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="none" stroke="#7D8E9F" stroke-width="2"/></svg>';
+  return {bar:'none',
+  body:'<div class="home"><h1 class="sr">Pantalla de inicio del celular</h1><div class="clock">'+pad(d.getHours())+':'+pad(d.getMinutes())+'</div><div class="hdate">'+fdate(d)+'</div>'+
+  '<div class="apps">'+app('ma','openMerchant','Mercado Aurora',I.sun('#0D1B2A',34))+app('ba','openBank','Banco Andino','<span style="font-family:var(--hf);font-weight:800;font-size:26px;color:#fff">A</span>')+
+  app('dim','na','Mensajes',dim)+app('dim','na','Ajustes',dim)+app('dim','na','Cámara',dim)+app('dim','na','Calendario',dim)+'</div>'+
+  '<p class="hint-home">Toca una app para abrirla</p></div>'};
+};
+R.fin=function(){return {bar:'merchant',back:null,
+  body:'<div class="center" style="padding-top:70px">'+I.ok+'<h1>Tarea terminada</h1><p class="muted">Gracias. Avísale a la persona que te acompaña en la prueba.</p></div>'};};
+
+var BANK_ROUTES=['banco','bseg','p7b'];
+var LABELS={p1:'P1 Carrito pedido 1',p2:'P2 Medio de pago',p3:'P3 Resumen autorización',p4:'P4 Huella o clave',p5:'P5 Confirmación',p6:'P6 Segundo pedido',c3:'Pedido 3 ($480.000)',p8:'P8 Supera el tope',
+  perfil:'Perfil del comercio',mp:'Medios de pago',p7:'P7 Autorizaciones (comercio)',banco:'App Banco Andino',bseg:'Banco · Seguridad',p7b:'P7 Autorizaciones (banco)',home:'Inicio del celular',
+  ar:'A Redirección',al:'A Banca en línea',ac:'A Confirmar en banco',fin:'Fin de tarea'};
+
+/* ---------- Router ---------- */
+var screenEl=$('#screen'),ovEl=$('#ov');
+function buildBar(d){
+  var back=d.back?'<button class="back" data-act="back" data-to="'+d.back+'">'+I.back+'<span>Atrás</span></button>':'<span class="back-sp"></span>';
+  if(d.bar==='none')return '';
+  if(d.bar==='merchant')return '<header class="appbar">'+back+'<div class="brand"><span class="mark" aria-hidden="true">'+I.sun('#fff',20)+'</span><span>'+(d.title?esc(d.title):'Mercado Aurora')+'</span></div>'+
+    (d.noProf?'':'<button class="prof" data-act="toPerfil" aria-label="Perfil">'+I.user+'<span aria-hidden="true">Perfil</span></button>')+'</header>';
+  if(d.bar==='browser')return '<div class="urlbar">'+I.lock+'<span>pagos-seguros.ejemplo.co</span></div>';
+  if(d.bar==='bankweb')return '<div class="urlbar">'+I.lock+'<span>bancoandino.ejemplo.co/pagos</span></div><header class="appbar bank">'+back+'<div class="brand"><span class="bmark" aria-hidden="true">A</span><span>Banco Andino · Banca en línea</span></div></header>';
+  return '<header class="appbar bank">'+back+'<div class="brand"><span class="bmark" aria-hidden="true">A</span><span>'+(d.title?esc(d.title):'Banco Andino')+'</span></div></header>';
+}
+function go(r){if(location.hash==='#'+r)render();else location.hash=r;}
+function startPaymentTask(o){
+  if(task.t0&&!task.done&&task.order!==o)log('abandono',{motivo:'cambio_de_pedido',pedido:task.order,ms:Date.now()-task.t0});
+  task={t0:Date.now(),order:o,screens:0,errors:0,done:false};S.useToken=true;S.remember=false;S.authMode='huella';S.failed={};
+  log('inicio_tarea',{pedido:o,autorizacion:tokenState(),valor:ORD[o].total});
+}
+function render(re){
+  var r=location.hash.slice(1);
+  if(!R[r]){r='p1';history.replaceState(null,'',location.pathname+location.search+'#p1');}
+  tok++;hideOverlay();closeSheet(true);hidePush();
+  if(!re){
+    if(cur&&cur!==r)log('tiempo_pantalla',{ms:Date.now()-enteredAt},code(cur));
+    var cartOrder={p1:1,p6:2,c3:3}[r];
+    if(cartOrder&&(task.done||task.order!==cartOrder))startPaymentTask(cartOrder);
+    if(task.t0&&!task.done)task.screens++;
+    cur=r;enteredAt=Date.now();
+    trail.push(code(r));if(trail.length>20)trail.shift();
+    if(BANK_ROUTES.indexOf(r)<0&&r!=='home'&&r!=='fin')S.lastMerchant=r;
+  }
+  var d=R[r]();
+  $('#phone').classList.toggle('on-home',r==='home');
+  $('#homebar').hidden=false;
+  screenEl.innerHTML=buildBar(d)+(r==='home'?d.body:'<div class="content">'+d.body+'</div>')+(d.foot?'<div class="footer">'+d.foot+'</div>':'');
+  screenEl.scrollTop=0;
+  save();
+  if(!re)log('entrada_pantalla',{autorizacion:tokenState()},code(r));
+  if(d.after)d.after();
+  var h=screenEl.querySelector('h1');if(h){h.setAttribute('tabindex','-1');try{h.focus({preventScroll:true});}catch(_){h.focus();}}
+}
+window.addEventListener('hashchange',function(){render();});
+
+/* ---------- Estados: carga, error, huella, avisos ---------- */
+var retryFn=null;
+function ov(html,dark){ovEl.className='overlay'+(dark?' dark':'');ovEl.innerHTML=html;ovEl.hidden=false;}
+function hideOverlay(){ovEl.hidden=true;ovEl.innerHTML='';}
+function busy(msg,ms){var t=tok;
+  ov('<div class="spinner" aria-hidden="true"></div><p class="ov-t" role="status">'+msg+'</p><p class="muted small">Esto toma solo unos segundos.</p>');
+  return new Promise(function(res){setTimeout(function(){if(t!==tok){res(false);return;}hideOverlay();res(true);},ms);});}
+function maybeFail(k){if(S.forceErr&&!S.failed[k]){S.failed[k]=true;return true;}return false;}
+function showError(title,msg,retry){
+  task.errors++;log('error_sistema',{mensaje:title});retryFn=retry||null;
+  ov(I.alert+'<h2 class="ov-t" role="alert">'+title+'</h2><p class="muted">'+msg+'</p><button class="btn btn-primary" data-act="ovRetry">Intentar de nuevo</button>');
+  var b=ovEl.querySelector('button');if(b)b.focus();
+}
+function fingerprint(){var t=tok;
+  ov('<div class="fp-ring">'+I.fp+'</div><p class="ov-t" role="status">Pon tu dedo en el sensor</p><p class="muted small">Verificación biométrica simulada de Banco Andino</p>');
+  return new Promise(function(res){setTimeout(function(){res(t===tok);},1500);});}
+function toast(msg){var el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){el.hidden=true;},2600);}
+function showPush(msg){var el=$('#push');
+  el.innerHTML='<div class="push-h"><strong><span class="bmark" aria-hidden="true">A</span>Banco Andino</strong><span>ahora</span></div><p>'+msg+'</p><button class="link" data-act="hidePush">Cerrar aviso</button>';
+  el.hidden=false;clearTimeout(showPush._t);showPush._t=setTimeout(hidePush,9000);}
+function hidePush(){$('#push').hidden=true;}
+
+/* ---------- Hojas inferiores ---------- */
+var lastFocus=null;
+function openSheet(html){lastFocus=document.activeElement;$('#sheet').innerHTML=html;$('#sheetWrap').hidden=false;
+  var f=$('#sheet').querySelector('input,button');if(f)f.focus();}
+function closeSheet(silent){if($('#sheetWrap').hidden)return;$('#sheetWrap').hidden=true;$('#sheet').innerHTML='';if(!silent&&lastFocus&&lastFocus.focus)lastFocus.focus();}
+function sheetHead(t){return '<div class="sheet-h"><h2 id="sh-t">'+t+'</h2><button class="iconbtn" data-act="closeSheet" aria-label="Cerrar">'+I.close+'</button></div>';}
+
+/* ---------- Pago ---------- */
+function completePayment(mode,created){
+  var o=S.order,O=ORD[o],d=orderDate(o);
+  S.txns.push({d:'Mercado Aurora · '+O.ref,f:fdate(d),v:O.total});
+  S.last={order:o,mode:mode,created:!!created,aprob:rnd(6),date:fdate(d)+' · '+ftime(new Date()),fresh:true};
+  if(task.t0&&!task.done){
+    task.done=true;
+    var det={pedido:o,valor:O.total,modo:mode,ms_total:Date.now()-task.t0,pantallas:task.screens,errores:task.errors,autorizacion:tokenState()};
+    log('pago_completado',det);
+    if(o===2)log('segundo_pago_completado',{ms_total:det.ms_total,modo:mode,pantallas:task.screens});
+    if(mode==='tope')log('tope_exito',{ms_total:det.ms_total,errores:task.errors});
+  }
+  trail=[];  /* la ruta hacia «Revocar» se cuenta desde el último pago */
+  save();go('p5');
+}
+function revoke(c,from){
+  var t=c==='ma'?S.token:S.tienda;if(!t||!t.active)return;
+  t.active=false;t.revoked=fdate(new Date());
+  log('revocar',{comercio:c==='ma'?'Mercado Aurora':'Tienda Aurora',origen:from,ruta:trail.slice(-8).join(' > ')});
+  save();render(true);toast('Autorización revocada');
+}
+
+/* ---------- Acciones ---------- */
+var A={
+  back:function(el){log('atras',{hacia:code(el.dataset.to)});go(el.dataset.to);},
+  goHome:function(){if(cur==='home')return;log('ir_inicio_celular',{desde:code(cur)});go('home');},
+  openMerchant:function(){log('abrir_app',{app:'Mercado Aurora'});go(S.lastMerchant||'p1');},
+  openBank:function(){log('abrir_app',{app:'Banco Andino'});busy('Abriendo Banco Andino',900).then(function(ok){if(ok){S.p7bfrom='banco';go('banco');}});},
+  na:function(el){log('opcion_no_disponible',{opcion:el.dataset.t});toast('No disponible en esta prueba');},
+  otroMedio:function(){log('opcion_no_disponible',{opcion:'otro_medio'});toast('En esta prueba solo está disponible Banco Andino');},
+  cartPay:function(){go('p2');},
+  cambiar:function(){log('cambiar_abrir');
+    openSheet(sheetHead('¿Cómo quieres pagar esta compra?')+
+      '<p class="small muted">Pagas '+money(ORD[S.order].total)+' desde Banco Andino, '+CUENTA.toLowerCase()+'.</p>'+
+      '<button class="btn btn-primary" data-act="cambiarElegir" data-o="token">Usar mi autorización guardada</button>'+
+      '<button class="btn btn-secondary" data-act="cambiarElegir" data-o="completo">Autorizar solo esta compra con huella o clave</button>'+
+      '<button class="link" data-act="cambiarAdmin" style="margin-top:6px">Administrar mis autorizaciones</button>');},
+  cambiarElegir:function(el){var o=el.dataset.o;log('cambiar_elegido',{opcion:o});S.useToken=(o==='token');closeSheet(true);render(true);},
+  cambiarAdmin:function(){log('cambiar_elegido',{opcion:'administrar'});closeSheet(true);S.p7from=cur;go('p7');},
+  payToken:function(){
+    if(!tokenActive()){render(true);return;}
+    var O=ORD[S.order];
+    if(O.total>S.token.tope){
+      busy('Revisando tu autorización',1000).then(function(ok){if(!ok)return;log('tope_excedido',{valor:O.total,tope:S.token.tope});go('p8');});return;
+    }
+    busy('Pagando con tu autorización guardada',1500).then(function(ok){if(!ok)return;
+      if(maybeFail('tap')){showError('No pudimos completar el pago','No se hizo ningún cobro. Inténtalo de nuevo.');return;}
+      completePayment('un_toque');});
+  },
+  p2go:function(){go(S.variant==='A'?'ar':'p3');},
+  queSignifica:function(){log('que_significa_abierto');
+    openSheet(sheetHead('¿Qué significa recordar la autorización?')+
+      '<ul><li>Tus próximas compras en <strong>Mercado Aurora</strong> se pagarán en un toque desde tu '+CUENTA.toLowerCase()+', sin huella ni clave.</li>'+
+      '<li>Solo aplica a compras de hasta <strong>'+money(TOPE)+'</strong>. Si una compra cuesta más, te pediremos huella o clave.</li>'+
+      '<li>Solo sirve para Mercado Aurora. Ningún otro comercio puede usarla.</li>'+
+      '<li>Banco Andino te avisa cada vez que se use.</li>'+
+      '<li>Puedes revocarla cuando quieras en Mercado Aurora (Perfil › Mis autorizaciones de pago) o en la app de Banco Andino.</li></ul>'+
+      '<button class="btn btn-primary" data-act="closeSheet">Entendido</button>');},
+  p3go:function(){var c=$('#remember');S.remember=!!(c&&c.checked);
+    log('autorizacion_enviada',{recordar:S.remember,ya_tenia_autorizacion:tokenActive()});S.p4from='p3';go('p4');},
+  authMode:function(el){S.authMode=el.dataset.m;log('cambiar_metodo',{metodo:S.authMode});render(true);var f=$('#f-clave');if(f)f.focus();},
+  p4go:function(){
+    var mode=S.p4from==='p8'?'tope':'completo';
+    var finish=function(ok){if(!ok)return;
+      if(maybeFail('p4')){showError('No pudimos confirmar tu pago','No se hizo ningún cobro. Intenta autorizar de nuevo.');return;}
+      var created=false;
+      if(S.p4from==='p3'&&S.remember&&!tokenActive()){S.token={active:true,created:fdate(orderDate(S.order)),tope:TOPE,revoked:null};created=true;log('autorizacion_guardada',{tope:TOPE});}
+      completePayment(mode,created);};
+    if(S.authMode==='clave'){
+      var v=$('#f-clave').value;
+      if(!v){$('#e-clave').textContent='Escribe una clave (puede ser cualquiera).';$('#f-clave').setAttribute('aria-invalid','true');vErr(['clave']);$('#f-clave').focus();return;}
+      busy('Procesando tu pago',1300).then(finish);
+    }else fingerprint().then(function(ok){return ok&&busy('Procesando tu pago',1200);}).then(finish);
+  },
+  p5next:function(){var o=S.last?S.last.order:S.order;
+    if(o===3){go('fin');return;}
+    var nx=o+1,txt=nx===2?'Una semana después':'Diez días después';
+    log('salto_tiempo',{hacia_pedido:nx});
+    ov('<p class="ov-t" style="font-size:24px">'+txt+'</p><p>'+fdate(orderDate(nx))+'</p><p class="muted">'+(nx===2?'Vuelves a pedir el mercado de la semana en Mercado Aurora.':'Haces el mercado del mes en Mercado Aurora.')+'</p><button class="btn btn-primary" data-act="skipGo" data-r="'+CART_ROUTE[nx]+'">Continuar</button>',true);
+    ovEl.querySelector('button').focus();},
+  skipGo:function(el){go(el.dataset.r);},
+  p8go:function(){log('tope_autorizar');S.p4from='p8';S.remember=false;S.authMode='huella';go('p4');},
+  topeCancel:function(){log('tope_cancelado');go(CART_ROUTE[S.order]);},
+  alGo:function(){
+    var u=$('#f-user').value.trim(),p=$('#f-pass').value,bad=[];
+    $('#e-user').textContent=u?'':'Escribe un usuario (puede ser cualquiera).';$('#f-user').setAttribute('aria-invalid',u?'false':'true');if(!u)bad.push('usuario');
+    $('#e-pass').textContent=p?'':'Escribe una clave (puede ser cualquiera).';$('#f-pass').setAttribute('aria-invalid',p?'false':'true');if(!p)bad.push('clave');
+    if(bad.length){vErr(bad);$(bad[0]==='usuario'?'#f-user':'#f-pass').focus();return;}
+    busy('Validando tus datos',1200).then(function(ok){if(!ok)return;
+      if(maybeFail('al'))showError('Tu banco no respondió a tiempo','Vuelve a intentarlo. Tus datos no se guardaron.');else go('ac');});
+  },
+  acGo:function(){busy('Procesando tu pago',1500).then(function(ok){if(!ok)return;
+    if(maybeFail('ac')){showError('No pudimos completar el pago','No se hizo ningún cobro. Inténtalo de nuevo.');return;}
+    var t=tok;ov('<div class="spinner" aria-hidden="true"></div><p class="ov-t" role="status">Te estamos llevando de vuelta a Mercado Aurora</p>');
+    setTimeout(function(){if(t===tok)completePayment('redireccion');},1200);});},
+  toPerfil:function(){log('abrir_perfil');S.perfilFrom=(['perfil','mp','p7'].indexOf(cur)<0)?cur:S.perfilFrom;go('perfil');},
+  toMp:function(){go('mp');},
+  toP7:function(){S.p7from=cur==='p7'?S.p7from:cur;go('p7');},
+  toP7b:function(){S.p7bfrom=cur==='bseg'?'bseg':'banco';go('p7b');},
+  toBseg:function(){go('bseg');},
+  revoke:function(el){var c=el.dataset.c,from=el.dataset.from,name=c==='ma'?'Mercado Aurora':'Tienda Aurora';
+    log('revocar_abrir',{comercio:name,origen:from});
+    openSheet(sheetHead('¿Revocar la autorización de '+name+'?')+
+      '<p>'+name+' ya no podrá cobrarte sin tu huella o clave. En tu próxima compra tendrás que autorizar el pago completo.</p>'+
+      '<button class="btn btn-danger" data-act="revokeYes" data-c="'+c+'" data-from="'+from+'">Sí, revocar</button>'+
+      '<button class="btn btn-secondary" data-act="revokeNo" data-c="'+c+'">Cancelar</button>');},
+  revokeNo:function(el){log('revocar_cancelado',{comercio:el.dataset.c==='ma'?'Mercado Aurora':'Tienda Aurora'});closeSheet();},
+  revokeYes:function(el){var c=el.dataset.c,from=el.dataset.from;closeSheet(true);
+    busy('Revocando la autorización',1000).then(function(ok){if(!ok)return;
+      if(maybeFail('rev')){showError('No pudimos revocar la autorización','Sigue activa. Inténtalo de nuevo.');return;}
+      revoke(c,from);});},
+  hidePush:function(){hidePush();},
+  closeSheet:function(){closeSheet();},
+  ovRetry:function(){hideOverlay();log('reintentar');var f=retryFn;retryFn=null;if(f)f();},
+  /* moderador */
+  closeMod:function(){$('#mod').hidden=true;},
+  modStart:function(){
+    var v=(document.querySelector('input[name=mv]:checked')||{}).value||'A';
+    var t=(document.querySelector('input[name=mt]:checked')||{}).value==='1'&&v==='B';
+    var st=(document.querySelector('input[name=ms]:checked')||{}).value||'p1';
+    var fe=$('#m-err').checked;
+    if(task.t0&&!task.done)log('abandono',{motivo:'reinicio_moderador',pedido:task.order,ms:Date.now()-task.t0});
+    history.replaceState(null,'',location.pathname+'?v='+v+(t?'&token=1':'')+'#'+st);
+    S=freshState({forceErr:fe});task={t0:0,order:0,screens:0,errors:0,done:true};cur=null;trail=[];
+    log('inicio_moderador',{variante:v,autorizacion_inicial:t,inicio:code(st),forzar_errores:fe});
+    $('#mod').hidden=true;save();render();
+  },
+  jump:function(el){$('#mod').hidden=true;log('salto_moderador',{a:code(el.dataset.r)});go(el.dataset.r);},
+  modToken:function(el){
+    if(S.variant!=='B'){toast('La autorización solo existe en la variante B');return;}
+    if(el.dataset.v==='on')S.token={active:true,created:fdate(new Date()),tope:TOPE,revoked:null};
+    else if(S.token){S.token.active=false;S.token.revoked=fdate(new Date());}
+    log('moderador_autorizacion',{estado:tokenState()});save();render(true);renderMod();},
+  openLog:function(){$('#mod').hidden=true;toggleLog(true);},
+  reset:function(){$('#mod').hidden=true;resetProto();},
+  closeLog:function(){$('#logp').hidden=true;},
+  copyCsv:function(){var csv=toCsv(),done=function(){$('#copyMsg').textContent='CSV copiado ('+window.__log.length+' eventos).';};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(csv).then(done,function(){fallbackCopy(csv);done();});
+    else{fallbackCopy(csv);done();}},
+  dlCsv:function(){var blob=new Blob(['﻿'+toCsv()],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='a2-pago-app-comercio-log-'+SID+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);},
+  clearLog:function(){if(!confirm('¿Borrar todo el registro guardado en este navegador?'))return;window.__log.length=0;try{localStorage.removeItem(LS_KEY);}catch(_){}renderLog();}
+};
+
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-act]');if(!el)return;
+  var f=A[el.dataset.act];if(!f)return;
+  if(el.hasAttribute('data-primary'))log('accion_principal',{boton:el.textContent.trim()});
+  f(el,e);
+});
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.id==='remember'){S.remember=t.checked;save();log('recordar_marcado',{valor:t.checked});}
+});
+document.addEventListener('input',function(e){
+  var t=e.target;
+  if(t.getAttribute&&t.getAttribute('aria-invalid')==='true'){t.setAttribute('aria-invalid','false');
+    var d=(t.getAttribute('aria-describedby')||'').split(' ').filter(function(x){return /^e-/.test(x);})[0];if(d)$('#'+d).textContent='';}
+});
+
+/* ---------- Panel del moderador (tecla M) ---------- */
+function renderMod(){
+  function r(name,val,lab,chk){return '<label class="opt"><input type="radio" name="'+name+'" value="'+val+'"'+(chk?' checked':'')+'> '+lab+'</label>';}
+  var groups=[['Flujo de pago',['p1','p2','p3','p4','p5','p6','c3','p8']],['Variante A',['ar','al','ac']],['Autorizaciones',['perfil','mp','p7','home','banco','bseg','p7b']],['Otras',['fin']]];
+  var ts={no_existe:'No existe',activa:'Activa (tope '+money(TOPE)+')',revocada:'Revocada'}[tokenState()];
+  $('#mod').innerHTML='<div class="pbox" role="dialog" aria-modal="true" aria-labelledby="mod-t">'+
+  '<div class="ph"><h2 id="mod-t">Panel del moderador</h2><button class="iconbtn" data-act="closeMod" aria-label="Cerrar">'+I.close+'</button></div>'+
+  '<div class="state">Sesión <strong>'+SID+'</strong> · Variante <strong>'+S.variant+'</strong> · Autorización Mercado Aurora: <strong>'+ts+'</strong> · Pedido en curso: '+S.order+'</div>'+
+  '<div class="pactions"><button class="btn btn-secondary sm" data-act="modToken" data-v="on">Activar autorización</button><button class="btn btn-secondary sm" data-act="modToken" data-v="off">Revocar autorización</button></div>'+
+  '<h3>Iniciar una prueba nueva</h3>'+
+  '<fieldset><legend>Variante</legend>'+r('mv','A','A · El pago redirige a la página del banco',S.variant==='A')+r('mv','B','B · Pago dentro de la app con autorización guardable',S.variant==='B')+'</fieldset>'+
+  '<fieldset><legend>Autorización guardada al iniciar (solo B)</legend>'+r('mt','0','No',!tokenActive())+r('mt','1','Sí, activa con tope de '+money(TOPE),tokenActive())+'</fieldset>'+
+  '<fieldset><legend>Empezar en</legend>'+r('ms','p1','Pedido 1 · '+money(ORD[1].total),true)+r('ms','p6','Pedido 2 · '+money(ORD[2].total))+r('ms','c3','Pedido 3 · '+money(ORD[3].total)+' (caso tope)')+
+    r('ms','perfil','Perfil de Mercado Aurora')+r('ms','home','Inicio del celular (para llegar a la app del banco)')+'</fieldset>'+
+  '<label class="opt" style="margin-top:12px"><input type="checkbox" id="m-err"'+(S.forceErr?' checked':'')+'> Simular un error recuperable la primera vez en cada paso crítico</label>'+
+  '<button class="btn btn-primary" data-act="modStart" style="margin-top:6px">Aplicar e iniciar</button>'+
+  groups.map(function(g){return '<h3>'+g[0]+'</h3><div class="jumps">'+g[1].map(function(k){return '<button data-act="jump" data-r="'+k+'">'+LABELS[k]+' <span class="muted">#'+k+'</span></button>';}).join('')+'</div>';}).join('')+
+  '<div class="pactions" style="margin-top:16px"><button class="btn btn-secondary sm" data-act="openLog">Ver registro</button><button class="btn btn-secondary sm" data-act="reset">Reiniciar prototipo</button></div>'+
+  '<p class="small muted">Atajos: <span class="kbd">M</span> este panel · <span class="kbd">Shift+L</span> registro · <span class="kbd">Shift+R</span> reiniciar · <span class="kbd">Esc</span> cerrar. En celular: toca 5 veces seguidas la banda superior.</p>'+
+  '<p class="small muted">Enlaces directos: <span class="kbd">?v=A</span> · <span class="kbd">?v=B</span> · <span class="kbd">?v=B&amp;token=1#p6</span> (segundo pago con autorización) · <span class="kbd">?v=B&amp;token=1#c3</span> (caso tope) · <span class="kbd">?v=B&amp;token=1#home</span> (revocar)</p></div>';
+}
+function toggleMod(){var m=$('#mod');if(m.hidden){renderMod();m.hidden=false;var f=m.querySelector('input:checked');if(f)f.focus();}else m.hidden=true;}
+
+/* ---------- Registro (Shift+L) ---------- */
+var COLS=['ts','sesion','variante','pantalla','accion','detalle'];
+function toCsv(){return [COLS.join(',')].concat(window.__log.map(function(e){return COLS.map(function(c){var v=String(e[c]==null?'':e[c]);return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',');})).join('\n');}
+function fallbackCopy(t){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(_){}a.remove();}
+function renderLog(){
+  var L=window.__log,start=Math.max(0,L.length-600);
+  var rows=L.slice(start).map(function(e){return '<tr>'+COLS.map(function(c){return '<td>'+esc(e[c]==null?'':e[c])+'</td>';}).join('')+'</tr>';}).join('');
+  $('#logp').innerHTML='<div class="pbox wide" role="dialog" aria-modal="true" aria-labelledby="log-t">'+
+  '<div class="ph"><h2 id="log-t">Registro de eventos ('+L.length+')</h2><button class="iconbtn" data-act="closeLog" aria-label="Cerrar">'+I.close+'</button></div>'+
+  '<div class="pactions"><button class="btn btn-primary sm" data-act="copyCsv">Copiar CSV</button><button class="btn btn-secondary sm" data-act="dlCsv">Descargar CSV</button><button class="btn btn-secondary sm" data-act="clearLog">Borrar registro</button></div>'+
+  '<p id="copyMsg" class="small" role="status" style="color:var(--ok);font-weight:600"></p>'+
+  (start?'<p class="small muted">Se muestran los últimos 600 eventos; el CSV incluye todos.</p>':'')+
+  '<div class="logt-wrap"><table class="logt"><thead><tr>'+COLS.map(function(c){return '<th scope="col">'+c+'</th>';}).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+  var w=$('#logp .logt-wrap');if(w)w.scrollTop=w.scrollHeight;
+}
+function toggleLog(force){var p=$('#logp');if(p.hidden||force){renderLog();p.hidden=false;var b=p.querySelector('button');if(b)b.focus();}else p.hidden=true;}
+
+/* ---------- Reinicio (Shift+R) ---------- */
+function resetProto(){
+  if(task.t0&&!task.done)log('abandono',{motivo:'reinicio',pedido:task.order,ms:Date.now()-task.t0});
+  log('reinicio');
+  S=freshState(S);SID='S'+Date.now().toString(36).toUpperCase();cur=null;trail=[];task={t0:0,order:0,screens:0,errors:0,done:true};
+  try{sessionStorage.removeItem(SK);}catch(_){}
+  $('#mod').hidden=true;$('#logp').hidden=true;
+  history.replaceState(null,'',location.pathname+location.search+'#p1');
+  render();toast('Prototipo reiniciado');
+}
+
+/* ---------- Teclado y gestos ---------- */
+document.addEventListener('keydown',function(e){
+  var t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable);
+  if(e.key==='Escape'){if(!$('#logp').hidden)$('#logp').hidden=true;else if(!$('#mod').hidden)$('#mod').hidden=true;else closeSheet();return;}
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  var inPanel=t&&t.closest&&t.closest('.panel');
+  if(typing&&t.type!=='radio'&&t.type!=='checkbox'&&!inPanel)return;
+  var k=e.key.toLowerCase();
+  if(e.shiftKey&&k==='l'){e.preventDefault();toggleLog();}
+  else if(e.shiftKey&&k==='r'){e.preventDefault();resetProto();}
+  else if(!e.shiftKey&&k==='m'){e.preventDefault();toggleMod();}
+});
+var taps=[];
+$('#band').addEventListener('click',function(){var n=Date.now();taps=taps.filter(function(x){return n-x<2000;});taps.push(n);if(taps.length>=5){taps=[];toggleMod();}});
+window.addEventListener('pagehide',function(){
+  if(cur)log('tiempo_pantalla',{ms:Date.now()-enteredAt},code(cur));
+  if(task.t0&&!task.done)log('abandono',{motivo:'salida_pagina',pedido:task.order,ms:Date.now()-task.t0,pantallas:task.screens});
+});
+
+/* ---------- Arranque ---------- */
+if(!R[location.hash.slice(1)])history.replaceState(null,'',location.pathname+location.search+'#p1');
+render();
+})();
+</script>
+<style>#idx-back{position:fixed;top:4px;left:4px;z-index:200;font:700 12px/1 "Source Sans 3",system-ui,sans-serif;color:#fff;background:rgba(13,27,42,.88);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 10px;text-decoration:none;min-height:24px;display:inline-flex;align-items:center}#idx-back:hover,#idx-back:focus-visible{background:#005FA3}</style><a id="idx-back" href="index.html" aria-label="Volver al índice de prototipos">&larr; Índice</a>
+</body>
+</html>

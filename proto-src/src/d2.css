@@ -1,0 +1,8 @@
+.bp{display:grid;grid-template-columns:150px repeat(6,minmax(140px,1fr));gap:6px;min-width:1000px}
+.bp-h{font-family:'Manrope',system-ui,sans-serif;font-weight:700;font-size:13px;padding:6px 4px;align-self:end}
+.bp-l{font-family:'Manrope',system-ui,sans-serif;font-weight:800;font-size:13.5px;display:flex;align-items:center;padding:4px;background:#EAF2F8;border-radius:10px}
+.cell{position:relative;min-height:96px;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 9px;font-size:13.5px;line-height:1.35;cursor:pointer}
+.cell:hover{border-color:var(--blue)}
+.cell.h1{background:#F5F9FC}.cell.h2{background:#FDF0D5;border-color:#E9C98A}.cell.h3{background:#FCE0DC;border-color:#E9A59C}
+.cell.mk{outline:3px solid var(--blue);outline-offset:-1px}
+.cell .star{position:absolute;top:4px;right:7px;color:var(--blue);font-size:16px}

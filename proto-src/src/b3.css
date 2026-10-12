@@ -1,0 +1,10 @@
+.b3{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;max-width:1280px;margin:0 auto;padding:20px 28px 56px;width:100%}
+.b3-main{min-width:0}
+@media (max-width:1000px){.b3{grid-template-columns:1fr;padding:16px}}
+.diag{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:8px 2px}
+.nodo{flex:1;min-width:96px;min-height:110px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:15px}
+.nodo.on{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
+.nodo.pain{border-color:var(--err)}
+.flecha{flex:0 0 60px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11.5px;color:var(--muted);gap:8px}
+.flecha span:first-child{border-bottom:2px solid var(--blue);padding-bottom:2px}
+.flecha span:last-child{border-top:2px dashed var(--field);padding-top:2px}
