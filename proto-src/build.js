@@ -1,6 +1,11 @@
 /* Uso: node build.js [id ...]  -> genera ../protos/<archivo>.html a partir de src/<id>.js (+ src/<id>.css opcional) */
 const fs=require('fs'),path=require('path');
 const FILES={
+ c5:['C5 · PSE Internacional','c5-pse-internacional.html'],
+ a6:['A6 · Remesas internacionales','a6-remesas-internacionales.html'],
+ b5:['B5 · Escrow (transferencia segura)','b5-escrow-transferencia-segura.html'],
+ b6:['B6 · Venta presente QR/NFC','b6-venta-presente-qr-nfc.html'],
+ a7:['A7 · Pago presente internacional','a7-pago-presente-internacional.html'],
  c4:['C4 · Pago PILA 24/7','c4-pago-pila-24-7.html'],
  d2:['D2 · Blueprint Hub Open Finance · Proveedor','d2-blueprint-hub-proveedor.html'],
  d3:['D3 · Portal de desarrolladores Hub · Receptor','d3-portal-desarrolladores-receptor.html'],

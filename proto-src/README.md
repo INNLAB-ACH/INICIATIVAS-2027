@@ -8,7 +8,7 @@ Los HTML de `../protos` (excepto A1, A2, A3 y C3, hechos a mano) se generan desd
 - `build.js`: une todo en un solo HTML autocontenido por prototipo.
 
 ```
-node build.js          # regenera los 16 prototipos
+node build.js          # regenera los 21 prototipos
 node build.js c4 d2    # regenera solo algunos
 ```
 

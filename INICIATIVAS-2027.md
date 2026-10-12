@@ -1,6 +1,6 @@
 # Iniciativas 2027 · Validación temprana
 
-Documento generado desde "Validación Temprana 2027.html". Total: 31 iniciativas en 6 células (A–F), 20 prototipos.
+Documento generado desde "Validación Temprana 2027.html". Total: 31 iniciativas en 6 células (A–F), 25 prototipos.
 
 ## Índice
 
@@ -1070,18 +1070,18 @@ Canales de pago desde el exterior (Western Union, tarjeta de crédito) y operado
 
 **Prototipo requerido**
 
-- **Requerimiento:** No
-- **Tipo:** Sin prototipo en esta etapa
-- **Alcance:** Por ahora solo guion de entrevista y encuesta; el prototipo se define al elegir el corredor piloto.
+- **Requerimiento:** Sí
+- **Tipo:** Navegable (A6)
+- **Alcance:** Prototipo navegable de envío y recepción: remitente en Brasil por PIX, cotización con y sin comparación frente a operador tradicional, y vista del beneficiario.
 
 
 **Tamaño de muestra**
 
 - **Entrevistas:** 8
-- **Pruebas de usabilidad moderadas:** 0
+- **Pruebas de usabilidad moderadas:** 6
 - **Maze:** 0
 - **Encuestas:** 100
-- **Detalle:** 8 entrevistas: 4 remitentes en el exterior, 2 beneficiarios en Colombia y 2 entidades financieras o billeteras. Encuesta a remitentes (n≥100).
+- **Detalle:** 8 entrevistas: 4 remitentes en el exterior, 2 beneficiarios en Colombia y 2 entidades financieras o billeteras. Encuesta a remitentes (n≥100). Más 6 pruebas moderadas del prototipo A6.
 
 
 **Usuarios a incluir**
@@ -1127,6 +1127,10 @@ Comunidades de migrantes y consulados; beneficiarios por referencia de los remit
 - Volumen anual de remesas a Colombia por corredor.
 - Costo promedio de enviar a Colombia con operadores tradicionales.
 - Estado de la interconexión PIX con Bre-B.
+
+**Prototipos que lo cubren**
+
+- **A6 · Remesas internacionales** (Navegable; responsable Por asignar) — Celular (390×844). Variantes: ?v=A = cotización con comparación frente a un operador tradicional. ?v=B = solo lo que recibe el destinatario y el desglose. ?vista=remitente | beneficiario. Tecla M para el moderador.
 
 ## LAB: Pago presente internacional
 
@@ -1229,18 +1233,18 @@ Redes de tarjeta (Visa/MC), Swift y fintechs (Prometeo, Sensedia).
 
 **Prototipo requerido**
 
-- **Requerimiento:** No
-- **Tipo:** Sin prototipo en esta etapa
-- **Alcance:** Por ahora solo guion de entrevista y encuesta; el prototipo se define tras confirmar el caso (presencial por QR o e-commerce).
+- **Requerimiento:** Sí
+- **Tipo:** Navegable (A7)
+- **Alcance:** Prototipo navegable de pago con la app de un banco de Brasil: QR presencial y checkout de e-commerce, con dos formas de mostrar el cambio.
 
 
 **Tamaño de muestra**
 
 - **Entrevistas:** 8
-- **Pruebas de usabilidad moderadas:** 0
+- **Pruebas de usabilidad moderadas:** 6
 - **Maze:** 0
 - **Encuestas:** 80
-- **Detalle:** 8 entrevistas: 4 colombianos en Brasil, Argentina o Paraguay, 2 comercios de e-commerce en Colombia y 2 entidades financieras o fintechs. Encuesta a residentes en esos países (n≥80).
+- **Detalle:** 8 entrevistas: 4 colombianos en Brasil, Argentina o Paraguay, 2 comercios de e-commerce en Colombia y 2 entidades financieras o fintechs. Encuesta a residentes en esos países (n≥80). Más 6 pruebas moderadas del prototipo A7.
 
 
 **Usuarios a incluir**
@@ -1285,6 +1289,10 @@ Comunidades de colombianos en esos países; comercios clientes de PSE; contactos
 - Volumen de compras de residentes en el exterior en comercios colombianos.
 - Estado de la interconexión PIX con Bre-B.
 - Impacto en el ingreso transaccional de PSE.
+
+**Prototipos que lo cubren**
+
+- **A7 · Pago presente internacional** (Navegable; responsable Por asignar) — Celular (390×844), app del banco del usuario en Brasil. Variantes: ?v=A = primero el total en reales. ?v=B = primero el valor en pesos y tasa fija 60 s. ?modo=presencial | ecommerce. El caso e-commerce arranca en el checkout de un comercio colombiano. Tecla M para el moderador.
 
 ---
 
@@ -1570,18 +1578,18 @@ Cuentas escrow tradicionales ofrecidas directamente por bancos mediante fiducia 
 
 **Prototipo requerido**
 
-- **Requerimiento:** No
-- **Tipo:** Sin prototipo en esta etapa
-- **Alcance:** Por ahora solo guion de entrevista y encuesta; el prototipo se define tras validar el caso prioritario (inmobiliario o e-commerce de alto ticket).
+- **Requerimiento:** Sí
+- **Tipo:** Navegable (B5)
+- **Alcance:** Prototipo navegable del escrow: acuerdo, depósito en garantía, estado, liberación con dos reglas y disputa, vistas de comprador y vendedor.
 
 
 **Tamaño de muestra**
 
 - **Entrevistas:** 8
-- **Pruebas de usabilidad moderadas:** 0
+- **Pruebas de usabilidad moderadas:** 6
 - **Maze:** 0
 - **Encuestas:** 80
-- **Detalle:** 8 entrevistas: 3 compradores o vendedores en operaciones inmobiliarias, 2 comercios o marketplaces de alto ticket, 2 fiduciarias o bancos y 1 abogado o notario. Encuesta a compradores recientes de alto ticket (n≥80).
+- **Detalle:** 8 entrevistas: 3 compradores o vendedores en operaciones inmobiliarias, 2 comercios o marketplaces de alto ticket, 2 fiduciarias o bancos y 1 abogado o notario. Encuesta a compradores recientes de alto ticket (n≥80). Más 6 pruebas moderadas del prototipo B5.
 
 
 **Usuarios a incluir**
@@ -1627,6 +1635,10 @@ Inmobiliarias y marketplaces clientes de PSE; contactos con fiduciarias y bancos
 - Volumen de transacciones inmobiliarias y e-commerce de alto ticket en Colombia.
 - Costo y tiempos de la fiducia y el escrow bancario tradicional.
 - Postura de la SFC sobre un escrow tecnológico sin licencia fiduciaria propia.
+
+**Prototipos que lo cubren**
+
+- **B5 · Escrow (transferencia segura)** (Navegable; responsable Por asignar) — Celular (390×844). Variantes: ?v=A = liberación cuando ambas partes confirman. ?v=B = ventana de revisión de 48 h y liberación automática. ?rol=comprador | vendedor. Tecla M para el moderador.
 
 ## LAB: Módulo de venta presente (QR/NFC)
 
@@ -1733,18 +1745,18 @@ Redeban, Credibanco y otros adquirentes tradicionales de datáfonos que enfrenta
 
 **Prototipo requerido**
 
-- **Requerimiento:** No
-- **Tipo:** Sin prototipo en esta etapa
-- **Alcance:** Por ahora solo guion de entrevista y encuesta; el prototipo (QR estático, QR dinámico y NFC) se define tras confirmar la diferenciación frente a Bre-B.
+- **Requerimiento:** Sí
+- **Tipo:** Navegable (B6)
+- **Alcance:** Prototipo navegable de cobro presencial: QR fijo y dinámico, app del cliente y cobro NFC con lectura fallida.
 
 
 **Tamaño de muestra**
 
 - **Entrevistas:** 8
-- **Pruebas de usabilidad moderadas:** 0
+- **Pruebas de usabilidad moderadas:** 6
 - **Maze:** 0
 - **Encuestas:** 100
-- **Detalle:** 8 entrevistas con dueños o administradores de comercios físicos pequeños y medianos (4 sin datáfono, 2 con datáfono y 2 que ya venden con PSE online). Encuesta a comercios (n≥100).
+- **Detalle:** 8 entrevistas con dueños o administradores de comercios físicos pequeños y medianos (4 sin datáfono, 2 con datáfono y 2 que ya venden con PSE online). Encuesta a comercios (n≥100). Más 6 pruebas moderadas del prototipo B6.
 
 
 **Usuarios a incluir**
@@ -1790,6 +1802,10 @@ Comercios clientes de PSE; asociaciones de comerciantes; observación presencial
 - Penetración de QR de Bre-B en comercio pequeño.
 - Costo promedio del datáfono para un comercio pequeño.
 - Madurez de NFC como receptor de pago en celulares Android y iOS.
+
+**Prototipos que lo cubren**
+
+- **B6 · Venta presente QR/NFC** (Navegable; responsable Por asignar) — Celular (390×844) del comercio y del cliente. Variantes: ?v=A = QR fijo: el cliente escribe el valor. ?v=B = QR dinámico: valor fijo por venta y vencimiento. El cobro con tarjeta por NFC está en ambas. Tecla M para el moderador.
 
 ## TESO: Marca Blanca + ERP
 
@@ -2639,18 +2655,18 @@ Canales de pago desde el exterior (Western Union, tarjeta de crédito) y operado
 
 **Prototipo requerido**
 
-- **Requerimiento:** No
-- **Tipo:** Sin prototipo en esta etapa
-- **Alcance:** Por ahora solo guion de entrevista y encuesta; el prototipo se define tras confirmar el caso de uso (seguridad social o crédito de vivienda).
+- **Requerimiento:** Sí
+- **Tipo:** Navegable (C5)
+- **Alcance:** Prototipo navegable del pago desde una cuenta en el exterior: elección de PILA o crédito de vivienda, país y banco, cotización con y sin desglose, autorización y comprobante.
 
 
 **Tamaño de muestra**
 
 - **Entrevistas:** 8
-- **Pruebas de usabilidad moderadas:** 0
+- **Pruebas de usabilidad moderadas:** 6
 - **Maze:** 0
 - **Encuestas:** 100
-- **Detalle:** 8 entrevistas: 5 colombianos residentes en EE. UU., España o México que cotizan o han dejado de cotizar a PILA, 2 entidades financieras y 1 operador PILA. Encuesta a residentes en el exterior (n≥100).
+- **Detalle:** 8 entrevistas: 5 colombianos residentes en EE. UU., España o México que cotizan o han dejado de cotizar a PILA, 2 entidades financieras y 1 operador PILA. Encuesta a residentes en el exterior (n≥100). Más 6 pruebas moderadas del prototipo C5.
 
 
 **Usuarios a incluir**
@@ -2695,6 +2711,10 @@ Redes y consulados de colombianos en el exterior, comunidades de migrantes; cont
 - Cuántos de ellos cotizan hoy a PILA.
 - Costo real de pagar con Western Union o tarjeta frente a la propuesta.
 - Cómo operan otros operadores PILA con residentes en el exterior.
+
+**Prototipos que lo cubren**
+
+- **C5 · PSE Internacional** (Navegable; responsable Por asignar) — Celular (390×844). Variantes: ?v=A = cotización con solo el total en la moneda del usuario. ?v=B = cotización con desglose (comisión, tasa y margen de cambio). En el primer paso el usuario elige qué paga (planilla PILA o cuota de crédito de vivienda), lo que ayuda a resolver cuál es el caso de uso. Tecla M para el moderador.
 
 ## SOI: Renovación tecnológica de SOI ( evolucion de Monolito a Microservicios -mejorar la experiencia de soportes y reportes )
 
